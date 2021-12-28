@@ -3,17 +3,8 @@
 <div class="container">
   <div class="col-span-12 w-full">
     <div class="grid-col-12 w-full">
-      <div class="col-span-12 sticky" style="background-color:green; height: 8vh; color:white; width: 100vw;">
-          <div class="flex-row justify-between mx-0">
-            <p>Name</p>
-            <div>
-              <p>link1</p>
-              <p>link2</p>
-              <p>link3</p>
-            </div>
-          </div>
-        </div>
         <div class="col-span-12" style="background-color: black; height: 60vh; color: white;">
+        <button @click="click">click me :) </button>
         </div>
         <div class="col-span-12" style="background-color: blue; height: 100vh; color: white;">
         </div>
@@ -27,24 +18,25 @@
   </div>
 </div>
 </template>
-<script>
-
-export default {
+<script lang="ts">
+import Vue from "vue";
+export default Vue.extend({
   name: 'HomeRouter',
-  props: {
-    msg: String
-  },
- data() {
+  data() {
   return {
     none: false,
+    message: 'hey there ;)',
   }
  },
- methods: {
+  methods: {
    handleClick(tab, event) {
      console.log(tab, event);
-   }
- }
-}
+   },
+   click(): void {
+     window.alert(this.message);
+   },
+ },
+});
 </script>
 
 <style lang="scss" scoped>
