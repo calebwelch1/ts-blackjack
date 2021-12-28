@@ -1,0 +1,30 @@
+// columns
+@for $i from 1 through 12 {
+    .grid-col-#{$i} {
+      display:grid;
+      grid-template-columns: repeat($i, minmax(0, 1fr));
+    }
+  }
+  
+@for $i from 1 through 12 {
+    .col-span-#{$i} {
+        grid-column: span $i / span $i;
+    }
+}
+
+@for $i from 1 through 50 {
+  .gap-#{$i} {
+      gap: $i rem;
+  }
+}
+
+.justify-start {	justify-content: flex-start}
+.justify-end	{justify-content: flex-end}
+.justify-center{	justify-content: center}
+.justify-between{	justify-content: space-between}
+.justify-around{	justify-content: space-around}
+.justify-evenly{	justify-content: space-evenly}
+
+.flex-wrap	{flex-wrap: wrap}
+.flex-wrap-reverse	{flex-wrap: wrap-reverse}
+.flex-nowrap	{flex-wrap: nowrap}
