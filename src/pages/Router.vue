@@ -4,6 +4,16 @@
   <div class="col-span-12 w-full">
     <div class="grid-col-12 w-full">
         <div class="col-span-12" style="background-color: black; height: 100vh; color: white;">
+          <div id="myModal" class="modal" style="color:red">
+            <p> hi this is bet page! </p>
+            <input type="number"
+            v-model="bet" 
+            :min="1"
+            :max="money"
+            />
+            {{bet}}
+            <button @click="hideModalPlaceBet" :disabled="bet<= 0 || bet>money">Place Bet</button>
+          </div>
           <div class="flex flex-col">
             <div class="h-80vh w-60vw mx-auto" style="background-color:green; position: relative;">
               <div class="w-24 h-8" style="position:absolute; background-color: black; top: 1rem; left: 35%; color: white;">
@@ -84,7 +94,7 @@ export default Vue.extend({
   return {
     gameSteps: ['bet', 'deal', 'game', 'result'],
     gameStep: 0,
-    message: 'hey there ;)',
+    message: '',
     deck,
     currentDeck,
     bet: 0,
@@ -94,12 +104,59 @@ export default Vue.extend({
   }
  },
  mounted() {
-   switch(this.gameSteps[this.gameStep]) {
+   this.gameloop();
+},
+  methods: {
+    getIndexByName(name: string): number{
+    return currentDeck.map(function(e) { return e.name; }).indexOf(name);
+   },
+    removeCard<T>(nameOfCard: T): Array<T> {
+    const index = currentDeck.map(function(e) { return e.name; }).indexOf(nameOfCard);
+    if (index > -1) {
+      currentDeck.splice(index, 1);
+    }
+  },
+    getRandomCard(){
+      let randomCard = currentDeck[Math.floor(Math.random() * currentDeck.length)];
+      return randomCard;
+    },
+    dealTwoCards(): Array {
+      let card1;
+      let card2;
+      card1 = this.getRandomCard();
+      this.removeCard(card1.name);
+      card2 = this.getRandomCard();
+      this.removeCard(card2.name);
+      console.log(card1, card2);
+      return [card1, card2];
+    },
+    dealOneCard(): object{
+      let card1;
+      card1 = this.getRandomCard();
+      return card1;
+    },
+    deal(){
+    let cardSet1 = this.dealTwoCards();
+    let cardSet2 = this.dealTwoCards();
+    console.log(cardSet1);
+    this.DealerCards = cardSet1;
+    this.PlayerCards = cardSet2;
+    },
+    hideModalPlaceBet(){
+    document.getElementById("myModal").style.display="none";
+    this.money = this.money - this.bet;
+    this.gameStep++;
+    this.gameloop();
+    },
+    gameloop(){
+      switch(this.gameSteps[this.gameStep]) {
   case 'bet':
-    console.log('you need to bet!')
+    console.log('you need to bet!');
+    document.getElementById("myModal").style.display="block";
     break;
   case 'deal':
-    // code block
+    console.log('dealing!');
+    this.deal();
     break;
   case 'game':
     // code block
@@ -110,35 +167,7 @@ export default Vue.extend({
   default:
     console.log('plz return to game loop')
 }
-},
-  methods: {
-    getIndexByName(name: string): number{
-    return currentDeck.map(function(e) { return e.name; }).indexOf(name);
-   },
-  //  getIndexById(id: number): number{
-  //   return currentDeck.map(function(e) { return e.id; }).indexOf(id);
-  //  },
-    removeCard<T>(nameOfCard: T): Array<T> {
-    const index = currentDeck.map(function(e) { return e.name; }).indexOf(nameOfCard);
-    if (index > -1) {
-      currentDeck.splice(index, 1);
     }
-  },
-    getRandomCard(){
-      // let namedDeck = currentDeck.map(function(e) { return e.name; });
-      let randomCard = currentDeck[Math.floor(Math.random() * currentDeck.length)];
-      return randomCard;
-    },
-    dealTwoCards(): Array {
-      // targetArray = [getRandomCard(), getRandomCard()];
-      let card1;
-      let card2;
-      card1 = this.getRandomCard();
-      this.removeCard(card1.name);
-      card2 = this.getRandomCard();
-      this.removeCard(card2.name);
-      return [card1, card2];
-    },
  },
  computed:{
  },
@@ -200,5 +229,19 @@ overflow: hidden;
 
 /deep/.el-tabs__item {
   color: #b7b7b7;
+}
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
 }
 </style>
