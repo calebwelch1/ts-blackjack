@@ -6,6 +6,7 @@
         <div class="col-span-12" style="background-color: black; height: 100vh; color: white;">
           <div id="myModal" class="modal" style="color:red">
             <p> hi this is bet page! </p>
+            <p v-if="showResultText"> You {{result}} !</p>
             <input type="number"
             v-model="bet" 
             :min="1"
@@ -23,7 +24,9 @@
               <p> Money: </p>
               <p>{{money}}</p>
               </div>
-              <div class="w-24 h-8" style="position:absolute; background-color: white; top: 45%; left: 35%;">
+              <div class="w-24 h-8 flex-row justify-between" style="position:absolute; background-color: white; top: 45%; left: 35%;">
+              <button v-if="HitStay" @click="hitOrStay('stay')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">stay</button>
+              <button v-if="HitStay" @click="hitOrStay('hit')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">hit</button>
               </div>
               <div class="w-10 h-8" style="position:absolute; background-color: white; top: 45%; right: 5%; color: black;">
               <p> Bet: </p>
@@ -31,6 +34,7 @@
               </div>
               <div class="w-24 h-8" style="position:absolute; background-color: black; bottom: 1rem; left: 35%; color: white;">
               {{PlayerCards}}
+              value:{{getValue(PlayerCards)}}
               </div>
             </div>
             <p>index by name: '2 of Spades' is : {{getIndexByName('Ace of Spades')}}</p>
@@ -60,6 +64,7 @@ type Card = {
     suit: string,
 }
 // 2 of spades is 0, ace of hearts is 51 = 52
+//TODO: adding 1 card when hit, count value (exceptions for aces!), dealer logic(just hit if under 17),
 
 let deck: any[]=[];
 
@@ -101,6 +106,9 @@ export default Vue.extend({
     money: 100,
     PlayerCards: [],
     DealerCards: [],
+    HitStay: false,
+    result: '',
+    showResultText: false,
   }
  },
  mounted() {
@@ -127,26 +135,100 @@ export default Vue.extend({
       this.removeCard(card1.name);
       card2 = this.getRandomCard();
       this.removeCard(card2.name);
-      console.log(card1, card2);
       return [card1, card2];
     },
     dealOneCard(): object{
       let card1;
       card1 = this.getRandomCard();
+      this.removeCard(card1.name);
       return card1;
     },
     deal(){
     let cardSet1 = this.dealTwoCards();
     let cardSet2 = this.dealTwoCards();
-    console.log(cardSet1);
     this.DealerCards = cardSet1;
     this.PlayerCards = cardSet2;
+    this.gameStep++;
+    this.gameloop();
     },
     hideModalPlaceBet(){
     document.getElementById("myModal").style.display="none";
     this.money = this.money - this.bet;
     this.gameStep++;
     this.gameloop();
+    },
+    getValue(arr: Array): Number{
+      let sum=0;
+      let valueArr = arr.map(function(e) { return e.value; });
+      for (let i=0; i<valueArr.length; i++){
+        sum+= valueArr[i];
+      }
+      return sum;
+    },
+    game(showResult = false){
+      if(showResult === true){
+        if (this.getValue(this.PlayerCards) > this.getValue(this.DealerCards)){
+          this.win();
+        }
+        else if (this.getValue(this.PlayerCards) < this.getValue(this.DealerCards)){
+          this.lose();
+        }
+      }
+      else if (showResult === false){
+        if (this.getValue(this.PlayerCards) === 21){
+        this.win();
+      }
+      else if(this.getValue(this.DealerCards) === 21){
+        this.lose();
+      }
+      else if (this.getValue(this.PlayerCards) > 21){
+        this.lose();
+      }
+      else if (this.getValue(this.DealerCards) > 21){
+        this.win();
+      }
+      else {
+        this.showHitStay();
+      }
+      }
+    },
+    hitOrStay(decision){
+      if (decision === 'stay'){
+        console.log('stay');
+        this.decideIfDealerHit();
+        this.game(true);
+      }
+      if (decision === 'hit'){
+        console.log('hit');
+        this.PlayerCards.push(this.dealOneCard());
+        this.decideIfDealerHit();
+        this.game();
+      }
+    },
+    decideIfDealerHit(){
+      if (this.getValue(this.DealerCards) >= 17){
+        return;
+      }
+      else {
+        this.DealerCards.push(this.dealOneCard());
+      }
+    },
+    showHitStay(){
+      this.HitStay = true;
+    },
+    win() {
+      this.bet = this.bet * 2;
+      this.money += this.bet;
+      this.bet = 0;
+      this.result = 'win';
+      this.gameStep++ ;
+      this.gameloop();
+    },
+    lose() {
+      this.bet = 0;
+      this.result = 'lose';
+      this.gameStep++ ;
+      this.gameloop();
     },
     gameloop(){
       switch(this.gameSteps[this.gameStep]) {
@@ -159,15 +241,22 @@ export default Vue.extend({
     this.deal();
     break;
   case 'game':
-    // code block
+    console.log('lets play!');
+    this.game();
     break;
   case 'result':
-    // code block
+  this.showResult();
     break;
   default:
     console.log('plz return to game loop')
 }
-    }
+    },
+  showResult(){
+    document.getElementById("myModal").style.display="block";
+    this.showResultText = true;
+    this.gameStep = 0;
+    this.gameloop();
+  },
  },
  computed:{
  },
