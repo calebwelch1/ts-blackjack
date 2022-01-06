@@ -39,6 +39,7 @@
             </div>
             <p>index by name: '2 of Spades' is : {{getIndexByName('Ace of Spades')}}</p>
             <p>currentDeck length: {{currentDeck.length}}</p>
+            <p>Deck length: {{deck.length}}</p>
             <p>randomCard: {{getRandomCard()}}</p>
             <button @click="removeCard('9 of Spades')">click to remove a card by index name</button>
           </div>
@@ -63,35 +64,13 @@ type Card = {
     value: number,
     suit: string,
 }
-// 2 of spades is 0, ace of hearts is 51 = 52
-//TODO: adding 1 card when hit, count value (exceptions for aces!), dealer logic(just hit if under 17),
+//TODO: (exceptions for aces!), when money is 0, ui lol, fix weird deck not losing or gaining cards, probably just put making the deck into it's own method.
 
 let deck: any[]=[];
 
-for (let i = 0; i<cards.length; i++){
 
-  for (let j=0; j<suits.length; j++){
 
-    let currentValue;
-
-    if (cards[i] === 'Jack' || cards[i] === 'Queen' || cards[i] === 'King'){
-      currentValue = 10;
-    }
-    else if (cards[i] === 'Ace'){
-      currentValue = 11;
-    }
-    else currentValue = cards[i];
-
-    let newCard: Card = {
-      id: cards[i],
-      name: cards[i].toString() + ` of ` + suits[j],
-      value: currentValue,
-      suit: suits[j],
-    }
-    deck.push(newCard);
-  }
-}
-const currentDeck = deck;
+// let currentDeck = deck.map((x) => x);
 
 export default Vue.extend({
   name: 'HomeRouter',
@@ -101,7 +80,7 @@ export default Vue.extend({
     gameStep: 0,
     message: '',
     deck,
-    currentDeck,
+    currentDeck: [],
     bet: 0,
     money: 100,
     PlayerCards: [],
@@ -116,16 +95,16 @@ export default Vue.extend({
 },
   methods: {
     getIndexByName(name: string): number{
-    return currentDeck.map(function(e) { return e.name; }).indexOf(name);
+    return this.currentDeck.map(function(e) { return e.name; }).indexOf(name);
    },
     removeCard<T>(nameOfCard: T): Array<T> {
-    const index = currentDeck.map(function(e) { return e.name; }).indexOf(nameOfCard);
+    const index = this.currentDeck.map(function(e) { return e.name; }).indexOf(nameOfCard);
     if (index > -1) {
-      currentDeck.splice(index, 1);
+      this.currentDeck.splice(index, 1);
     }
   },
     getRandomCard(){
-      let randomCard = currentDeck[Math.floor(Math.random() * currentDeck.length)];
+      let randomCard = this.currentDeck[Math.floor(Math.random() * this.currentDeck.length)];
       return randomCard;
     },
     dealTwoCards(): Array {
@@ -234,6 +213,9 @@ export default Vue.extend({
       switch(this.gameSteps[this.gameStep]) {
   case 'bet':
     console.log('you need to bet!');
+    this.currentDeck = [];
+    this.makeDeck(this.currentDeck);
+    console.log(this.currentDeck.length);
     document.getElementById("myModal").style.display="block";
     break;
   case 'deal':
@@ -255,7 +237,33 @@ export default Vue.extend({
     document.getElementById("myModal").style.display="block";
     this.showResultText = true;
     this.gameStep = 0;
+    this.currentDeck = this.deck.map((x)=>x);
     this.gameloop();
+  },
+  makeDeck(deck: Array): Array{
+    for (let i = 0; i<cards.length; i++){
+
+      for (let j=0; j<suits.length; j++){
+
+        let currentValue;
+
+        if (cards[i] === 'Jack' || cards[i] === 'Queen' || cards[i] === 'King'){
+          currentValue = 10;
+        }
+        else if (cards[i] === 'Ace'){
+          currentValue = 11;
+        }
+        else currentValue = cards[i];
+
+        let newCard: Card = {
+          id: cards[i],
+          name: cards[i].toString() + ` of ` + suits[j],
+          value: currentValue,
+          suit: suits[j],
+        }
+        deck.push(newCard);
+      }
+    }
   },
  },
  computed:{
