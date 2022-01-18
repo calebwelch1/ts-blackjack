@@ -4,19 +4,30 @@
   <div class="col-span-12 w-full">
     <div class="grid-col-12 w-full">
         <div class="col-span-12" style="background-color: black; height: 100vh; color: white;">
-          <div id="myModal" class="modal" style="color:red">
-            <p> hi this is bet page! </p>
-            <p v-if="showResultText"> You {{result}} !</p>
+          <div id="myModal" class="modal" style="color:white;">
+            <div class="flex-row justify-center" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;" v-if="gameStep === 0">
+              <div>
+                <p >Money</p>
+                <p >${{money}}.00</p>
+              </div>
+              <p style="font-size: 5rem; margin-left: 3vw; margin-right: 3vw;">|</p>
+               <div>
+                <p >Bet</p>
+                <p >${{bet}}.00</p>
+              </div>
+            </div>
             <input type="number"
+            class="h-7 w-12"
+            style="font-size: 3rem; margin-right: 3vw;"
             v-model="bet" 
             :min="1"
             :max="money"
             />
-            {{bet}}
-            <button @click="hideModalPlaceBet" :disabled="bet<= 0 || bet>money">Place Bet</button>
+            <button @click="hideModalPlaceBet" :disabled="bet<= 0 || bet>money" class="w-10 h-10" style="background-color: blue; border: 2px solid white; border-radius: 1rem; color: white; font-size: 2rem;">Place Bet</button>
           </div>
           <div class="flex flex-col">
-            <div class="h-80vh w-80vw mx-auto" style="background-color:green; position: relative; margin-top: 6vh;">
+            <div class="h-88vh w-80vw mx-auto" style="background-color:green; position: relative; margin-top: 6vh;">
+            <p v-if="showWinText" style="font-size: 2rem; font-weight: 700; position:absolute; background-color: white; top: 20%; left: 25%; color: black;"> {{result === 'win' ? 'You Win!' : 'Dealer Wins!'}}</p>
               <div id="dealer-card-container" class="w-24 h-8" style="position: absolute; top: 10%; right: 18%; color: white;">
                 <div v-if="gameStep != 0" class="flex-row justify-between" style="border: 1px solid white; border-radius: 0.5rem;">
                   <img
@@ -41,6 +52,7 @@
               <div id="hit-stay-container" class="w-24 h-8 flex-row justify-between" style="position:absolute; top: 30%; left: 23%;">
               <button id="action-button" v-if="HitStay" @click="hitOrStay('stay')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">stay</button>
               <button id="action-button" v-if="HitStay" @click="hitOrStay('hit')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">hit</button>
+              <button id="action-button" v-if="showWinText" @click="nextRound" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">Next Round</button>
               </div>
               <div id="player-card-container" class="w-24 h-8" style="position:absolute; bottom: 25%; left: 25%; color: white;">
               <p v-if="gameStep != 0" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">{{getValue(PlayerCards)}}</p>
@@ -169,6 +181,7 @@ export default Vue.extend({
     HitStay: false,
     result: '',
     showResultText: false,
+    winTextVisible: false,
     cardbacks: [ astro,
     bee,
     dog,
@@ -294,13 +307,14 @@ export default Vue.extend({
         }
       }
       else if (showResult === false){
-        if (this.getValue(this.PlayerCards) === 21){
-        this.win();
-      }
-      else if(this.getValue(this.DealerCards) === 21){
-        this.lose();
-      }
-      else if (this.getValue(this.PlayerCards) > 21){
+      //   if (this.getValue(this.PlayerCards) === 21){
+      //   this.win();
+      // }
+      // else if(this.getValue(this.DealerCards) === 21){
+      //   this.lose();
+      // }
+      // else 
+      if (this.getValue(this.PlayerCards) > 21){
         this.lose();
       }
       else if (this.getValue(this.DealerCards) > 21){
@@ -340,14 +354,28 @@ export default Vue.extend({
       this.money += this.bet;
       this.bet = 0;
       this.result = 'win';
-      this.gameStep++ ;
-      this.gameloop();
+      // this.gameStep++ ;
+      // this.gameloop();
+      this.showWinText();
     },
     lose() {
       this.bet = 0;
       this.result = 'lose';
-      this.gameStep++ ;
+      // this.gameStep++ ;
+      // this.gameloop();
+      this.showWinText();
+    },
+    nextStep(){
+      this.gameStep ++;
       this.gameloop();
+    },
+    nextRound(){
+      this.showWinText = false;
+      this.nextStep();
+    },
+    showWinText(){
+      this.winTextVisible = true;
+      // do animation stuff here;
     },
     addImgs(){
       for (let i=0; i<this.currentDeck.length; i++){
