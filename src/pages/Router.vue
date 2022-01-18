@@ -16,56 +16,55 @@
             <button @click="hideModalPlaceBet" :disabled="bet<= 0 || bet>money">Place Bet</button>
           </div>
           <div class="flex flex-col">
-            <div class="h-80vh w-60vw mx-auto" style="background-color:green; position: relative;">
-              <div class="w-24 h-8" style="position:absolute; background-color: black; top: 1rem; left: 35%; color: white;">
-                <div v-if="gameStep != 0" class="flex-row justify-between">
+            <div class="h-80vh w-80vw mx-auto" style="background-color:green; position: relative; margin-top: 6vh;">
+              <div id="dealer-card-container" class="w-24 h-8" style="position: absolute; top: 10%; right: 18%; color: white;">
+                <div v-if="gameStep != 0" class="flex-row justify-between" style="border: 1px solid white; border-radius: 0.5rem;">
                   <img
-                  :src="DealerCards[0].img"
-                  style="width: 40%;"
+                  :src="currentCardback"
+                  style="width: 47%;"
                   />
                   <img
                   :src="DealerCards[1].img"
-                  style="width: 40%;"
+                  style="width: 47%;"
                   />
                 </div>
-                <p style="margin: 3rem;">{{DealerCards}}</p>
+              <p v-if="gameStep != 0" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">?</p>
               </div>
-              <div class="w-10 h-8" style="position:absolute; background-color: white; top: 45%; left: 5%; color:black">
-              <p> Money: </p>
-              <p>{{money}}</p>
-              </div>
-              <div class="w-24 h-8 flex-row justify-between" style="position:absolute; background-color: white; top: 45%; left: 35%;">
-              <button v-if="HitStay" @click="hitOrStay('stay')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">stay</button>
-              <button v-if="HitStay" @click="hitOrStay('hit')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">hit</button>
-              </div>
-              <div class="w-10 h-8" style="position:absolute; background-color: white; top: 45%; right: 5%; color: black;">
+              <div id="bet-container" class="w-10 h-8" style="position:absolute; background-color: white; top: 20%; left: 5%; color: black;">
               <p> Bet: </p>
               <p>{{bet}}</p>
               </div>
-              <div class="w-24 h-8" style="position:absolute; background-color: black; bottom: 1rem; left: 35%; color: white;">
-              <div v-if="gameStep != 0" class="flex-row justify-between">
+              <div class="w-10 h-8" style="position:absolute; background-color: white; top: 70%; left: 5%; color:black">
+              <p> Money: </p>
+              <p>{{money}}</p>
+              </div>
+              <div id="hit-stay-container" class="w-24 h-8 flex-row justify-between" style="position:absolute; top: 30%; left: 23%;">
+              <button id="action-button" v-if="HitStay" @click="hitOrStay('stay')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">stay</button>
+              <button id="action-button" v-if="HitStay" @click="hitOrStay('hit')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">hit</button>
+              </div>
+              <div id="player-card-container" class="w-24 h-8" style="position:absolute; bottom: 25%; left: 25%; color: white;">
+              <p v-if="gameStep != 0" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">{{getValue(PlayerCards)}}</p>
+              <div v-if="gameStep != 0" class="flex-row justify-between" style="border: 1px solid white; border-radius: 0.5rem;">
                 <img
                 :src="PlayerCards[0].img"
-                style="width: 40%;"
+                style="width: 47%;"
                 />
                 <img
                 :src="PlayerCards[1].img"
-                style="width: 40%;"
+                style="width: 47%;"
                 />
               </div>
-                <p style="margin: 3rem;">{{PlayerCards}}</p>
-
-              value:{{getValue(PlayerCards)}}
+              </div>
+                <div id="deck" class="w-24 h-8" style="position:absolute; bottom: 25%; right: 5%; color: white;">
+              <div v-if="gameStep != 0" class="flex-row justify-evenly">
+                <img
+                :src="currentCardback"
+                style="width: 50%;"
+                />
+              </div>
               </div>
             </div>
-            <p>index by name: 'two of Spades' is : {{getIndexByName('two_of_spades')}}</p>
-            <p>currentDeck length: {{currentDeck.length}}</p>
-            <p>Deck length: {{deck.length}}</p>
-            <p>randomCard: {{getRandomCard()}}</p>
-            <button @click="removeCard('2_of_spades')">click to remove a card by index name</button>
           </div>
-        </div>
-        <div class="col-span-12" style="background-color: blue; height: 100vh; color: white;">
         </div>
       </div>
     </div>
@@ -130,6 +129,11 @@ import queen_of_spades from './cards/queen_of_spades.svg'
 import king_of_spades from './cards/king_of_spades.svg'
 import ace_of_spades from './cards/ace_of_spades.svg'
 
+import astro from './cardback/astro.jpg';
+import bee from './cardback/bee.jpg';
+import dog from './cardback/dog.jpg';
+import dragon from './cardback/dragon.jpg';
+import redflower from './cardback/redflower.jpg';
 
 let cards: any[]=[ 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king', 'ace'];
 
@@ -165,6 +169,11 @@ export default Vue.extend({
     HitStay: false,
     result: '',
     showResultText: false,
+    cardbacks: [ astro,
+    bee,
+    dog,
+    dragon,
+    redflower,],
     cardImgs:[
     two_of_clubs,
     two_of_hearts,
@@ -454,11 +463,22 @@ export default Vue.extend({
   },
  },
  computed:{
+   currentCardback(){
+     return this.cardbacks[2];
+   },
  },
 });
 </script>
 
 <style lang="scss" scoped>
+#action-button {
+  background-color: black;
+  color: white;
+  border: 2px solid slategrey;
+  border-radius: 1rem;
+  font-weight: 400;
+  font-size: 1.5rem;
+}
 
 .sticky {
   position: fixed;
