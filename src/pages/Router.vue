@@ -27,7 +27,7 @@
           </div>
           <div class="flex flex-col">
             <div class="h-88vh w-80vw mx-auto" style="background-color:green; position: relative; margin-top: 6vh;">
-            <p v-if="showWinText" style="font-size: 2rem; font-weight: 700; position:absolute; background-color: white; top: 20%; left: 25%; color: black;"> {{result === 'win' ? 'You Win!' : 'Dealer Wins!'}}</p>
+            <p v-if="winTextVisible" style="font-size: 2rem; font-weight: 700; position:absolute; background-color: white; top: 20%; left: 25%; color: black;"> {{result === 'win' ? 'You Win!' : 'Dealer Wins!'}}</p>
               <div id="dealer-card-container" class="w-24 h-8" style="position: absolute; top: 10%; right: 18%; color: white;">
                 <div v-if="gameStep != 0" class="flex-row justify-between" style="border: 1px solid white; border-radius: 0.5rem;">
                   <img
@@ -52,7 +52,7 @@
               <div id="hit-stay-container" class="w-24 h-8 flex-row justify-between" style="position:absolute; top: 30%; left: 23%;">
               <button id="action-button" v-if="HitStay" @click="hitOrStay('stay')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">stay</button>
               <button id="action-button" v-if="HitStay" @click="hitOrStay('hit')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">hit</button>
-              <button id="action-button" v-if="showWinText" @click="nextRound" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">Next Round</button>
+              <button id="action-button" v-if="winTextVisible" @click="nextRound" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">Next Round</button>
               </div>
               <div id="player-card-container" class="w-24 h-8" style="position:absolute; bottom: 25%; left: 25%; color: white;">
               <p v-if="gameStep != 0" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">{{getValue(PlayerCards)}}</p>
@@ -298,6 +298,7 @@ export default Vue.extend({
       return sum;
     },
     game(showResult = false){
+      // fix this with winTextVisible
       if(showResult === true){
         if (this.getValue(this.PlayerCards) > this.getValue(this.DealerCards)){
           this.win();
@@ -307,13 +308,13 @@ export default Vue.extend({
         }
       }
       else if (showResult === false){
-      //   if (this.getValue(this.PlayerCards) === 21){
-      //   this.win();
-      // }
-      // else if(this.getValue(this.DealerCards) === 21){
-      //   this.lose();
-      // }
-      // else 
+        if (this.getValue(this.PlayerCards) === 21){
+        this.win();
+      }
+      else if(this.getValue(this.DealerCards) === 21){
+        this.lose();
+      }
+      else 
       if (this.getValue(this.PlayerCards) > 21){
         this.lose();
       }
@@ -370,10 +371,11 @@ export default Vue.extend({
       this.gameloop();
     },
     nextRound(){
-      this.showWinText = false;
+      this.winTextVisible = false;
       this.nextStep();
     },
     showWinText(){
+      this.HitStay = false;
       this.winTextVisible = true;
       // do animation stuff here;
     },
