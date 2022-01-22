@@ -28,19 +28,19 @@
           <div class="flex flex-col">
             <div class="h-88vh w-80vw mx-auto" style="background-color:green; position: relative; margin-top: 6vh;">
             <p v-if="winTextVisible" style="font-size: 2rem; font-weight: 700; position:absolute; background-color: white; top: 20%; left: 25%; color: black;"> {{result === 'win' ? 'You Win!' : 'Dealer Wins!'}}</p>
-              <div id="dealer-card-container" class="w-24 h-8" style="position: absolute; top: 10%; right: 18%; color: white;">
-                <div v-if="gameStep != 0" class="flex-row justify-between" style="border: 1px solid white; border-radius: 0.5rem;">
                   <img
+                  v-if="gameStep != 0"
+                  id="dealer-card-1"
                   :src="currentCardback"
-                  style="width: 47%;"
+                  style="width: 12%; position: absolute; top: 8%; right: 26%;"
                   />
                   <img
+                  v-if="gameStep != 0"
+                  id="dealer-card-2"
                   :src="DealerCards[1].img"
-                  style="width: 47%;"
+                  style="width: 12%; position: absolute; top: 8%; right: 12%;"
                   />
-                </div>
-              <p v-if="gameStep != 0" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">?</p>
-              </div>
+              <p v-if="gameStep != 0" style="width: 12%; position: absolute; top: 44%; right: 12%; font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">?</p>
               <div id="bet-container" class="w-10 h-8" style="position:absolute; background-color: white; top: 20%; left: 5%; color: black;">
               <p> Bet: </p>
               <p>{{bet}}</p>
@@ -54,19 +54,19 @@
               <button id="action-button" v-if="HitStay" @click="hitOrStay('hit')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">hit</button>
               <button id="action-button" v-if="winTextVisible" @click="nextRound" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">Next Round</button>
               </div>
-              <div id="player-card-container" class="w-24 h-8" style="position:absolute; bottom: 25%; left: 25%; color: white;">
               <p v-if="gameStep != 0" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">{{getValue(PlayerCards)}}</p>
-              <div v-if="gameStep != 0" class="flex-row justify-between" style="border: 1px solid white; border-radius: 0.5rem;">
                 <img
+                v-if="gameStep != 0"
+                id="player-card-1"
+                style="width: 12%; position:absolute; bottom: 9%; left: 22%;"
                 :src="PlayerCards[0].img"
-                style="width: 47%;"
                 />
                 <img
+                v-if="gameStep != 0"
+                id="player-card-2"
                 :src="PlayerCards[1].img"
-                style="width: 47%;"
+                style="width: 12%; position:absolute; bottom: 9%; left: 37%;"
                 />
-              </div>
-              </div>
                 <div id="deck" class="w-24 h-8" style="position:absolute; bottom: 25%; right: 5%; color: white;">
               <div v-if="gameStep != 0" class="flex-row justify-evenly">
                 <img
