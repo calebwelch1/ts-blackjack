@@ -28,18 +28,22 @@
           <div class="flex flex-col">
             <div class="h-88vh w-80vw mx-auto" style="background-color:green; position: relative; margin-top: 6vh;">
             <p v-if="winTextVisible" style="font-size: 2rem; font-weight: 700; position:absolute; background-color: white; top: 20%; left: 25%; color: black;"> {{result === 'win' ? 'You Win!' : 'Dealer Wins!'}}</p>
+                <transition name="card">
                   <img
-                  v-if="gameStep != 0"
+                  v-if="gameStep != 0 && showDealerOne"
                   id="dealer-card-1"
                   :src="currentCardback"
                   style="width: 12%; position: absolute; top: 8%; right: 26%;"
                   />
+                  </transition>
+                <transition name="card">
                   <img
-                  v-if="gameStep != 0"
+                  v-if="gameStep != 0 && showDealerTwo"
                   id="dealer-card-2"
                   :src="DealerCards[1].img"
                   style="width: 12%; position: absolute; top: 8%; right: 12%;"
                   />
+                  </transition>
               <p v-if="gameStep != 0" style="width: 12%; position: absolute; top: 44%; right: 12%; font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">?</p>
               <div id="bet-container" class="w-10 h-8" style="position:absolute; background-color: white; top: 20%; left: 5%; color: black;">
               <p> Bet: </p>
@@ -55,18 +59,22 @@
               <button id="action-button" v-if="winTextVisible" @click="nextRound" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">Next Round</button>
               </div>
               <p v-if="gameStep != 0" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">{{getValue(PlayerCards)}}</p>
+                <transition name="card">
+                  <img
+                  v-if="gameStep != 0 && showPlayerOne"
+                  id="player-card-1"
+                  style="width: 12%; position:absolute; bottom: 9%; left: 22%;"
+                  :src="PlayerCards[0].img"
+                  />
+                </transition>
+                <transition name="card">
                 <img
-                v-if="gameStep != 0"
-                id="player-card-1"
-                style="width: 12%; position:absolute; bottom: 9%; left: 22%;"
-                :src="PlayerCards[0].img"
-                />
-                <img
-                v-if="gameStep != 0"
+                v-if="gameStep != 0 && showPlayerTwo"
                 id="player-card-2"
                 :src="PlayerCards[1].img"
                 style="width: 12%; position:absolute; bottom: 9%; left: 37%;"
                 />
+                </transition>
                 <div id="deck" class="w-24 h-8" style="position:absolute; bottom: 25%; right: 5%; color: white;">
               <div v-if="gameStep != 0" class="flex-row justify-evenly">
                 <img
@@ -182,6 +190,10 @@ export default Vue.extend({
     result: '',
     showResultText: false,
     winTextVisible: false,
+    showDealerOne: false,
+    showDealerTwo: false,
+    showPlayerOne: false,
+    showPlayerTwo: false,
     cardbacks: [ astro,
     bee,
     dog,
@@ -276,10 +288,12 @@ export default Vue.extend({
       return card1;
     },
     deal(){
-    let cardSet1 = this.dealTwoCards();
-    let cardSet2 = this.dealTwoCards();
-    this.DealerCards = cardSet1;
-    this.PlayerCards = cardSet2;
+    this.DealerCards = this.dealTwoCards();
+    this.PlayerCards = this.dealTwoCards();
+    this.showDealerOne = true;
+    setTimeout(() => this.showPlayerOne = true, 500);
+    setTimeout(() => this.showDealerTwo = true, 1000);
+    setTimeout(() => this.showPlayerTwo = true, 1500);
     this.gameStep++;
     this.gameloop();
     },
@@ -300,7 +314,9 @@ export default Vue.extend({
     game(showResult = false){
       // fix this with winTextVisible
       if(showResult === true){
+        console.log('result is true');
         if (this.getValue(this.PlayerCards) > this.getValue(this.DealerCards)){
+          console.log('win');
           this.win();
         }
         else if (this.getValue(this.PlayerCards) < this.getValue(this.DealerCards)){
@@ -387,18 +403,12 @@ export default Vue.extend({
     gameloop(){
       switch(this.gameSteps[this.gameStep]) {
   case 'bet':
-    console.log('you need to bet!');
     this.currentDeck = [];
     this.makeDeck(this.currentDeck);
     this.addImgs();
-    console.log('img',this.currentDeck[0].img);
-    console.log('cardimgs',this.cardImgs);
-    console.log('deck',this.currentDeck);
-    console.log(this.currentDeck.length);
-    document.getElementById("myModal").style.display="block";
+    document.getElementById("myModal").style.display="block"; 
     break;
   case 'deal':
-    console.log('dealing!');
     this.deal();
     break;
   case 'game':
@@ -407,6 +417,10 @@ export default Vue.extend({
     break;
   case 'result':
   this.showResult();
+  this.showDealerOne = false;
+  this.showDealerTwo = false;
+  this.showPlayerOne = false;
+  this.showPlayerTwo = false;
     break;
   default:
     console.log('plz return to game loop')
@@ -529,41 +543,6 @@ margin:0;
 justify-items: center;
 overflow: hidden;
 }
-/deep/.el-tabs__header{
-  margin: 0;
-}
-/deep/.el-tabs__nav {
-  float:none;
-}
-/deep/.el-tabs__active-bar{
-  visibility: hidden;
-}
-
-/deep/.el-tabs__nav-wrap {
-  color:white;
-  background-color: black;
-  justify-items:center;
-}
-
-/deep/.el-tabs__item.is-active {
-  position: relative;
-  color: white;
-}
-
-// /deep/.el-tabs__item.is-active::after {
-//   position: absolute;
-//   content: '';
-//   width: 4rem;
-//   height: 0.1rem;
-//   top:2rem;
-//   right:0.8rem;
-//   background-color: white;
-//   transition: all .3s;
-// }
-
-/deep/.el-tabs__item {
-  color: #b7b7b7;
-}
 
 .modal {
   display: none; /* Hidden by default */
@@ -577,5 +556,19 @@ overflow: hidden;
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+// transitions
+
+.card-enter-active {
+  transition: all .3s ease;
+}
+.card-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.card-enter, .card-leave-to
+/* .player-card-1-leave-active below version 2.1.8 */ {
+  transform: translateY(-6rem);
+  opacity: 0;
 }
 </style>
