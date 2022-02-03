@@ -5,7 +5,13 @@
     <div class="grid-col-12 w-full">
         <div class="col-span-12" style="background-color: black; height: 100vh; color: white;">
           <div id="myModal" class="modal" style="color:white;">
-            <div class="flex-row justify-center" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;" v-if="gameStep === 0">
+            <div v-if="gameStep === 0">
+            <div v-if="showGameOver">
+            game over!
+            <button @click="resetGame"> Play Again! </button>
+            </div>
+            <div v-else>
+            <div class="flex-row justify-center" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">
               <div>
                 <p >Money</p>
                 <p >${{money}}.00</p>
@@ -24,15 +30,23 @@
             :max="money"
             />
             <button @click="hideModalPlaceBet" :disabled="bet<= 0 || bet>money" class="w-10 h-10" style="background-color: blue; border: 2px solid white; border-radius: 1rem; color: white; font-size: 2rem;">Place Bet</button>
+            </div>
+            </div>
           </div>
           <div class="flex flex-col">
             <div class="h-88vh w-80vw mx-auto" style="background-color:green; position: relative; margin-top: 6vh;">
             <p v-if="winTextVisible" style="font-size: 2rem; font-weight: 700; position:absolute; background-color: white; top: 20%; left: 25%; color: black;"> {{result === 'win' ? 'You Win!' : 'Dealer Wins!'}}</p>
                 <transition name="card">
                   <img
-                  v-if="gameStep != 0 && showDealerOne"
+                  v-if="gameStep != 0 && showDealerOne && winTextVisible === false"
                   id="dealer-card-1"
                   :src="currentCardback"
+                  style="width: 12.5%; position: absolute; top: 8%; right: 26%;"
+                  />
+                  <img
+                  v-if="gameStep != 0 && showDealerOne && winTextVisible"
+                  id="dealer-card-1"
+                  :src="DealerCards[0].img"
                   style="width: 12%; position: absolute; top: 8%; right: 26%;"
                   />
                   </transition>
@@ -44,7 +58,9 @@
                   style="width: 12%; position: absolute; top: 8%; right: 12%;"
                   />
                   </transition>
-              <p v-if="gameStep != 0" style="width: 12%; position: absolute; top: 44%; right: 12%; font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">?</p>
+              <p v-if="gameStep != 0" style="width: 12%; position: absolute; top: 44%; right: 19%; font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">
+              {{winTextVisible ? getValue(DealerCards) : '?' }}
+              </p>
               <div id="bet-container" class="w-10 h-8" style="position:absolute; background-color: white; top: 20%; left: 5%; color: black;">
               <p> Bet: </p>
               <p>{{bet}}</p>
@@ -58,7 +74,9 @@
               <button id="action-button" v-if="HitStay" @click="hitOrStay('hit')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">hit</button>
               <button id="action-button" v-if="winTextVisible" @click="nextRound" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">Next Round</button>
               </div>
-              <p v-if="gameStep != 0" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">{{getValue(PlayerCards)}}</p>
+              <p v-if="gameStep != 0" style="font-weight: 700; font-size: 3rem; color: white; margin: 0rem; position:absolute; bottom: 46%; left: 33%;">
+              {{getValue(PlayerCards)}}
+              </p>
                 <transition name="card">
                   <img
                   v-if="gameStep != 0 && showPlayerOne"
@@ -165,7 +183,7 @@ type Card = {
     value: number,
     suit: string,
 }
-//TODO: (exceptions for aces!), when money is 0, ui lol,
+//TODO: (exceptions for aces!), flip dealer card at end, adding cards, clean up imports, type your methods, ui for betting, ui for wins and losses, changing backgrounds
 
 let deck: any[]=[];
 
@@ -187,6 +205,7 @@ export default Vue.extend({
     PlayerCards: [],
     DealerCards: [],
     HitStay: false,
+    showGameOver: false,
     result: '',
     showResultText: false,
     winTextVisible: false,
@@ -388,6 +407,9 @@ export default Vue.extend({
     },
     nextRound(){
       this.winTextVisible = false;
+      if (this.money === 0){
+      this.showGameOver = true;
+      }
       this.nextStep();
     },
     showWinText(){
@@ -399,6 +421,11 @@ export default Vue.extend({
       for (let i=0; i<this.currentDeck.length; i++){
         this.currentDeck[i].img = this.cardImgs[i];
       }
+    },
+    resetGame(){
+      this.showGameOver = false;
+      this.money = 100;
+      this.gameloop();
     },
     gameloop(){
       switch(this.gameSteps[this.gameStep]) {
