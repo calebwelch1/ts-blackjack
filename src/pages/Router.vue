@@ -39,15 +39,15 @@
                 <transition name="card">
                   <img
                   v-if="gameStep != 0 && showDealerOne && winTextVisible === false"
-                  id="dealer-card-1"
+                  id="dealer-card-1-hidden"
                   :src="currentCardback"
-                  style="width: 12.5%; position: absolute; top: 8%; right: 26%;"
+                  style="width: 12.5%; position: absolute; top: 8%; right: 38%;"
                   />
                   <img
                   v-if="gameStep != 0 && showDealerOne && winTextVisible"
-                  id="dealer-card-1"
+                  id="dealer-card-1-actual"
                   :src="DealerCards[0].img"
-                  style="width: 12%; position: absolute; top: 8%; right: 26%;"
+                  style="width: 12%; position: absolute; top: 8%; right: 38%;"
                   />
                   </transition>
                 <transition name="card">
@@ -55,9 +55,17 @@
                   v-if="gameStep != 0 && showDealerTwo"
                   id="dealer-card-2"
                   :src="DealerCards[1].img"
-                  style="width: 12%; position: absolute; top: 8%; right: 12%;"
+                  style="width: 12%; position: absolute; top: 8%; right: 24%;"
                   />
                   </transition>
+                  <transition name="card">
+                  <img
+                  v-if="gameStep != 0 && showDealerTwo && DealerCards.length > 2"
+                  id="dealer-card-3"
+                  style="width: 12%; position:absolute; top: 8%; right: 10%;"
+                  :src="DealerCards[2].img"
+                  />
+                </transition>
               <p v-if="gameStep != 0" style="width: 12%; position: absolute; top: 44%; right: 19%; font-weight: 700; font-size: 3rem; color: white; margin: 0rem;">
               {{winTextVisible ? getValue(DealerCards) : '?' }}
               </p>
@@ -92,6 +100,22 @@
                 :src="PlayerCards[1].img"
                 style="width: 12%; position:absolute; bottom: 9%; left: 37%;"
                 />
+                </transition>
+                 <transition name="card">
+                  <img
+                  v-if="gameStep != 0 && showPlayerOne && PlayerCards.length > 2"
+                  id="player-card-3"
+                  style="width: 12%; position:absolute; bottom: 9%; left: 52%;"
+                  :src="PlayerCards[2].img"
+                  />
+                </transition>
+                  <transition name="card">
+                  <img
+                  v-if="gameStep != 0 && showPlayerOne && PlayerCards.length > 3"
+                  id="player-card-3"
+                  style="width: 12%; position:absolute; bottom: 20%; left: 52%;"
+                  :src="PlayerCards[3].img"
+                  />
                 </transition>
                 <div id="deck" class="w-24 h-8" style="position:absolute; bottom: 25%; right: 5%; color: white;">
               <div v-if="gameStep != 0" class="flex-row justify-evenly">
@@ -183,7 +207,7 @@ type Card = {
     value: number,
     suit: string,
 }
-//TODO: (exceptions for aces!), flip dealer card at end, adding cards, clean up imports, type your methods, ui for betting, ui for wins and losses, changing backgrounds
+//TODO: (exceptions for aces!), flip dealer card at end (animation?), adding cards, clean up imports, type your methods, ui for betting, ui for wins and losses, changing backgrounds
 
 let deck: any[]=[];
 
