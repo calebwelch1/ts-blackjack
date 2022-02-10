@@ -123,6 +123,11 @@
                 :src="currentCardback"
                 style="width: 50%;"
                 />
+                <div class="flex-col">
+                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="currentCardBack = cardbacks[1]">bee</button>
+                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="currentCardBack = cardbacks[2]">dog</button>
+                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="currentCardBack = cardbacks[3]">dragon</button>
+              </div>
               </div>
               </div>
             </div>
