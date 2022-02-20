@@ -77,7 +77,7 @@
               <p> Money: </p>
               <p>{{money}}</p>
               </div>
-              <div id="hit-stay-container" class="w-24 h-8 flex-row justify-between" style="position:absolute; top: 30%; left: 23%;">
+              <div id="hit-stay-container" class="w-24 h-8 flex-row justify-center" style="position:absolute; top: 30%; left: 23%;">
               <button id="action-button" v-if="HitStay" @click="hitOrStay('stay')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">stay</button>
               <button id="action-button" v-if="HitStay" @click="hitOrStay('hit')" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">hit</button>
               <button id="action-button" v-if="winTextVisible" @click="nextRound" class="w-8 h-4" style="margin-top: auto; margin-bottom: auto;">Next Round</button>
@@ -124,9 +124,9 @@
                 style="width: 50%;"
                 />
                 <div class="flex-col">
-                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="currentCardBack = cardbacks[1]">bee</button>
-                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="currentCardBack = cardbacks[2]">dog</button>
-                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="currentCardBack = cardbacks[3]">dragon</button>
+                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="setCardBack = cardbacks[1]">bee</button>
+                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="setCardBack = cardbacks[2]">dog</button>
+                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="setCardBack = cardbacks[3]">dragon</button>
               </div>
               </div>
               </div>
@@ -233,6 +233,7 @@ export default Vue.extend({
     money: 100,
     PlayerCards: [],
     DealerCards: [],
+    setCardBack: null,
     HitStay: false,
     showGameOver: false,
     result: '',
@@ -564,7 +565,11 @@ export default Vue.extend({
  },
  computed:{
    currentCardback(){
-     return this.cardbacks[2];
+     let newCardBack = this.setCardBack;
+     if (newCardBack === null){
+       newCardBack = this.cardbacks[2];
+     }
+     return newCardBack;
    },
  },
 });
