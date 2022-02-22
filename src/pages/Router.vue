@@ -124,9 +124,24 @@
                 style="width: 50%;"
                 />
                 <div class="flex-col">
-                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="setCardBack = cardbacks[1]">bee</button>
-                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="setCardBack = cardbacks[2]">dog</button>
-                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="setCardBack = cardbacks[3]">dragon</button>
+                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="setCardBack = cardbacks[1]">
+                <img
+                src="./icon/bee.svg"
+                style="height: 70%; width: 70%;"
+                />
+                </button>
+                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="setCardBack = cardbacks[2]">
+                <img
+                src="./icon/dog.svg"
+                style="height: 70%; width: 70%;"
+                />
+                </button>
+                <button class="h-5 w-5" style="margin-bottom: 0.5rem;" @click="setCardBack = cardbacks[3]">
+                <img
+                src="./icon/fish.svg"
+                style="height: 70%; width: 70%;"
+                />
+                </button>
               </div>
               </div>
               </div>
