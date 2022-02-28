@@ -154,6 +154,7 @@
 </div>
 </template>
 <script lang="ts">
+// @ts-nocheck
 import Vue from "vue";
 import two_of_clubs from './cards/two_of_clubs.svg'
 import three_of_clubs from './cards/three_of_clubs.svg'
