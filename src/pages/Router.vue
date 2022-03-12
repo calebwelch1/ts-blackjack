@@ -29,12 +29,12 @@
             :min="1"
             :max="money"
             />
-            <button @click="hideModalPlaceBet" :disabled="bet<= 0 || bet>money" class="w-10 h-10" style="background-color: blue; border: 2px solid white; border-radius: 1rem; color: white; font-size: 2rem;">Place Bet</button>
+            <button @click="hideModalPlaceBet" :disabled="bet<= 0 || bet>money" class="w-10 h-10 game-background" style="border: 2px solid white; border-radius: 1rem; color: white; font-size: 2rem;">Place Bet</button>
             </div>
             </div>
           </div>
           <div class="flex flex-col">
-            <div class="h-88vh w-80vw mx-auto" style="background-color:green; position: relative; margin-top: 6vh;">
+            <div class="h-88vh w-80vw mx-auto game-background" style=" position: relative; margin-top: 6vh;">
             <p v-if="winTextVisible" style="font-size: 2rem; font-weight: 700; position:absolute; background-color: white; top: 20%; left: 25%; color: black;"> {{result === 'win' ? 'You Win!' : 'Dealer Wins!'}}</p>
                 <transition name="card">
                   <img
@@ -600,6 +600,11 @@ export default Vue.extend({
   font-weight: 400;
   font-size: 1.5rem;
 }
+
+.game-background {
+background: radial-gradient(circle, rgba(100, 230, 116, 1.0) 0%, rgba(51, 17, 118, 1.0) 100%);
+}
+
 
 .sticky {
   position: fixed;
